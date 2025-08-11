@@ -88,7 +88,17 @@ class NewsService: ObservableObject {
             let uniqueArticles = Array(Set(filteredArticles.map { $0.id }))
                 .compactMap { id in filteredArticles.first { $0.id == id } }
             
-            self.articles = Array(uniqueArticles.shuffled().prefix(10))
+            var finalArticles = Array(uniqueArticles.shuffled().prefix(10))
+            
+            // Load bookmark states
+            let bookmarkedIds = UserDefaults.standard.stringArray(forKey: "LifeTunesBookmarkedIds") ?? []
+            finalArticles = finalArticles.map { article in
+                var updatedArticle = article
+                updatedArticle.isBookmarked = bookmarkedIds.contains(article.id.uuidString)
+                return updatedArticle
+            }
+            
+            self.articles = finalArticles
             self.isLoading = false
         }
     }
@@ -107,8 +117,23 @@ class NewsService: ObservableObject {
     }
     
     func bookmarkArticle(_ article: NewsArticle) {
+        // Save bookmark state to UserDefaults first
+        var bookmarkedIds = UserDefaults.standard.stringArray(forKey: "LifeTunesBookmarkedIds") ?? []
+        let isCurrentlyBookmarked = bookmarkedIds.contains(article.id.uuidString)
+        
+        if isCurrentlyBookmarked {
+            // Remove from bookmarks
+            bookmarkedIds.removeAll { $0 == article.id.uuidString }
+        } else {
+            // Add to bookmarks
+            bookmarkedIds.append(article.id.uuidString)
+        }
+        
+        UserDefaults.standard.set(bookmarkedIds, forKey: "LifeTunesBookmarkedIds")
+        
+        // Update in main articles array
         if let index = articles.firstIndex(where: { $0.id == article.id }) {
-            articles[index].isBookmarked.toggle()
+            articles[index].isBookmarked = !isCurrentlyBookmarked
         }
     }
     

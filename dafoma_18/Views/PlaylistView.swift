@@ -245,8 +245,10 @@ struct QuickCreateButton: View {
                     .foregroundColor(.white)
             }
             .frame(width: 80, height: 70)
+            .frame(minWidth: 80, minHeight: 70) // Ensure minimum touch target
             .background(Color.gray.opacity(0.2))
             .cornerRadius(12)
+            .contentShape(Rectangle()) // Ensure entire area is tappable
         }
         .disabled(isLoading)
         .buttonStyle(PlainButtonStyle())
@@ -311,27 +313,44 @@ struct CurrentPlaylistCard: View {
             
             // Playback controls
             HStack(spacing: 30) {
-                Button(action: {}) {
+                Button(action: {
+                    // Previous track functionality
+                    viewModel.playPreviousTrack()
+                }) {
                     Image(systemName: "backward.fill")
                         .font(.title2)
                         .foregroundColor(.white)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(PlainButtonStyle())
                 
                 Button(action: {
-                    if let track = playlist.tracks.first {
+                    if viewModel.isPlaying {
+                        viewModel.pausePlayback()
+                    } else if let track = playlist.tracks.first {
                         viewModel.playTrack(track)
                     }
                 }) {
-                    Image(systemName: "play.circle.fill")
+                    Image(systemName: viewModel.isPlaying ? "pause.circle.fill" : "play.circle.fill")
                         .font(.system(size: 50))
                         .foregroundColor(Color(red: 0.996, green: 0.157, blue: 0.29))
+                        .frame(width: 60, height: 60)
+                        .contentShape(Circle())
                 }
+                .buttonStyle(PlainButtonStyle())
                 
-                Button(action: {}) {
+                Button(action: {
+                    // Next track functionality
+                    viewModel.playNextTrack()
+                }) {
                     Image(systemName: "forward.fill")
                         .font(.title2)
                         .foregroundColor(.white)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(PlainButtonStyle())
             }
         }
         .padding()
@@ -405,11 +424,17 @@ struct PlaylistRowCard: View {
             HStack(spacing: 10) {
                 Button(action: {
                     viewModel.currentPlaylist = playlist
+                    if let firstTrack = playlist.tracks.first {
+                        viewModel.playTrack(firstTrack)
+                    }
                 }) {
                     Image(systemName: "play.circle")
                         .font(.title2)
                         .foregroundColor(Color(red: 0.996, green: 0.157, blue: 0.29))
+                        .frame(width: 44, height: 44)
+                        .contentShape(Circle())
                 }
+                .buttonStyle(PlainButtonStyle())
                 
                 Menu {
                     Button("Delete", role: .destructive) {
@@ -419,6 +444,8 @@ struct PlaylistRowCard: View {
                     Image(systemName: "ellipsis.circle")
                         .font(.title2)
                         .foregroundColor(.gray)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Circle())
                 }
             }
         }

@@ -13,7 +13,23 @@ class LocationService: NSObject, ObservableObject {
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        requestLocationPermission()
+        authorizationStatus = locationManager.authorizationStatus
+        checkInitialAuthorizationStatus()
+    }
+    
+    private func checkInitialAuthorizationStatus() {
+        switch authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            isLocationEnabled = true
+            startLocationUpdates()
+        case .denied, .restricted:
+            isLocationEnabled = false
+        case .notDetermined:
+            // Will request when needed
+            break
+        @unknown default:
+            break
+        }
     }
     
     func requestLocationPermission() {

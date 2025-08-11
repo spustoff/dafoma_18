@@ -479,11 +479,13 @@ struct SelectableChip: View {
                 .font(.headline)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
+                .frame(minHeight: 44) // Ensure minimum touch target
                 .background(
                     isSelected ? Color(red: 0.996, green: 0.157, blue: 0.29) : Color.gray.opacity(0.2)
                 )
                 .foregroundColor(isSelected ? .white : .gray)
                 .cornerRadius(20)
+                .contentShape(Rectangle()) // Ensure entire area is tappable
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -516,7 +518,7 @@ struct PermissionRow: View {
             Spacer()
             
             if !isGranted {
-                Button("Grant") {
+                Button("Continue") {
                     action()
                 }
                 .buttonStyle(SecondaryButtonStyle())
@@ -532,35 +534,7 @@ struct PermissionRow: View {
     }
 }
 
-// MARK: - Button Styles
-
-struct PrimaryButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.headline)
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color(red: 0.996, green: 0.157, blue: 0.29))
-            .cornerRadius(12)
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
-    }
-}
-
-struct SecondaryButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.headline)
-            .foregroundColor(.gray)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.gray.opacity(0.2))
-            .cornerRadius(12)
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
-    }
-}
+// Button styles are now in SharedButtonStyles.swift
 
 #Preview {
     OnboardingView()

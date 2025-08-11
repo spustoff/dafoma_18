@@ -7,6 +7,8 @@ class PlaylistViewModel: ObservableObject {
     @Published var currentPlaylist: Playlist?
     @Published var isGeneratingPlaylist: Bool = false
     @Published var errorMessage: String?
+    @Published var currentTrackIndex: Int = 0
+    @Published var isPlaying: Bool = false
     
     private let musicService: MusicService
     private let locationService: LocationService
@@ -23,6 +25,11 @@ class PlaylistViewModel: ObservableObject {
         musicService.$currentPlaylist
             .receive(on: DispatchQueue.main)
             .assign(to: \.currentPlaylist, on: self)
+            .store(in: &cancellables)
+        
+        musicService.$isPlaying
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.isPlaying, on: self)
             .store(in: &cancellables)
     }
     
@@ -74,6 +81,10 @@ class PlaylistViewModel: ObservableObject {
     }
     
     func playTrack(_ track: Track) {
+        guard let playlist = currentPlaylist else { return }
+        if let index = playlist.tracks.firstIndex(where: { $0.id == track.id }) {
+            currentTrackIndex = index
+        }
         musicService.playTrack(track)
     }
     
@@ -83,6 +94,23 @@ class PlaylistViewModel: ObservableObject {
     
     func stopPlayback() {
         musicService.stopPlayback()
+        currentTrackIndex = 0
+    }
+    
+    func playNextTrack() {
+        guard let playlist = currentPlaylist, !playlist.tracks.isEmpty else { return }
+        
+        currentTrackIndex = (currentTrackIndex + 1) % playlist.tracks.count
+        let nextTrack = playlist.tracks[currentTrackIndex]
+        musicService.playTrack(nextTrack)
+    }
+    
+    func playPreviousTrack() {
+        guard let playlist = currentPlaylist, !playlist.tracks.isEmpty else { return }
+        
+        currentTrackIndex = currentTrackIndex > 0 ? currentTrackIndex - 1 : playlist.tracks.count - 1
+        let previousTrack = playlist.tracks[currentTrackIndex]
+        musicService.playTrack(previousTrack)
     }
     
     func getPlaylistsForLocation(_ location: CLLocationCoordinate2D) -> [Playlist] {

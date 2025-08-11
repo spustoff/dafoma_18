@@ -16,6 +16,7 @@ class UserProfileViewModel: ObservableObject {
         self.locationService = locationService
         setupBindings()
         loadUserData()
+        checkNotificationPermission()
     }
     
     private func setupBindings() {
@@ -66,9 +67,20 @@ class UserProfileViewModel: ObservableObject {
     }
     
     func requestNotificationPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { [weak self] granted, _ in
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { [weak self] granted, error in
             DispatchQueue.main.async {
                 self?.hasNotificationPermission = granted
+                if let error = error {
+                    print("Notification permission error: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    func checkNotificationPermission() {
+        UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
+            DispatchQueue.main.async {
+                self?.hasNotificationPermission = settings.authorizationStatus == .authorized
             }
         }
     }

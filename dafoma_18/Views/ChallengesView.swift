@@ -301,11 +301,13 @@ struct CategoryChip: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
+            .frame(minHeight: 44) // Ensure minimum touch target
             .background(
                 isSelected ? Color(red: 0.996, green: 0.157, blue: 0.29) : Color.gray.opacity(0.2)
             )
             .foregroundColor(isSelected ? .white : .gray)
             .cornerRadius(20)
+            .contentShape(Capsule()) // Ensure entire area is tappable
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -385,14 +387,20 @@ struct ChallengeRowView: View {
                         Spacer()
                         
                         Button(challenge.currentProgress > 0 ? "Continue" : "Start") {
-                            viewModel.startChallenge(challenge)
+                            if challenge.currentProgress > 0 {
+                                viewModel.updateChallengeProgress(challenge, progress: challenge.currentProgress + 1)
+                            } else {
+                                viewModel.startChallenge(challenge)
+                            }
                         }
                         .font(.caption)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
+                        .frame(minHeight: 44)
                         .background(Color(red: 0.996, green: 0.157, blue: 0.29))
                         .foregroundColor(.white)
                         .cornerRadius(12)
+                        .contentShape(Rectangle())
                     }
                 }
             }
@@ -526,7 +534,11 @@ struct ChallengeDetailSheet: View {
                                 .cornerRadius(12)
                             } else {
                                 Button(challenge.currentProgress > 0 ? "Continue Challenge" : "Start Challenge") {
-                                    viewModel.startChallenge(challenge)
+                                    if challenge.currentProgress > 0 {
+                                        viewModel.updateChallengeProgress(challenge, progress: challenge.currentProgress + 1)
+                                    } else {
+                                        viewModel.startChallenge(challenge)
+                                    }
                                     presentationMode.wrappedValue.dismiss()
                                 }
                                 .buttonStyle(PrimaryButtonStyle())

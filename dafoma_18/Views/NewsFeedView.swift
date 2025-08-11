@@ -277,11 +277,13 @@ struct CategoryFilterChip: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
+            .frame(minHeight: 44) // Ensure minimum touch target
             .background(
                 isSelected ? Color(red: 0.996, green: 0.157, blue: 0.29) : Color.gray.opacity(0.2)
             )
             .foregroundColor(isSelected ? .white : .gray)
             .cornerRadius(20)
+            .contentShape(Capsule()) // Ensure entire area is tappable
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -363,7 +365,10 @@ struct ArticleRowView: View {
                     }) {
                         Image(systemName: article.isBookmarked ? "bookmark.fill" : "bookmark")
                             .foregroundColor(article.isBookmarked ? Color(red: 0.996, green: 0.157, blue: 0.29) : .gray)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
                     }
+                    .buttonStyle(PlainButtonStyle())
                     
                     if viewModel.isArticleRead(article) {
                         Image(systemName: "checkmark.circle.fill")
@@ -520,6 +525,8 @@ struct ArticleDetailSheet: View {
                 }) {
                     Image(systemName: article.isBookmarked ? "bookmark.fill" : "bookmark")
                         .foregroundColor(Color(red: 0.996, green: 0.157, blue: 0.29))
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
             )
             .onAppear {

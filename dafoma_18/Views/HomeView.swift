@@ -141,6 +141,7 @@ struct DashboardView: View {
                         .frame(width: 44, height: 44)
                         .background(Color.gray.opacity(0.2))
                         .cornerRadius(22)
+                        .contentShape(Circle()) // Ensure entire circle is tappable
                 }
             }
             
@@ -291,7 +292,7 @@ struct DashboardView: View {
                     title: "Mood Map",
                     subtitle: "Record your mood"
                 ) {
-                    // Navigate to mood map
+                    // This should work as a navigation, functionality is in MoodMapViewModel
                 }
             }
         }
@@ -378,9 +379,11 @@ struct ChallengeCard: View {
                         .font(.caption)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
+                        .frame(minHeight: 44)
                         .background(Color(red: 0.996, green: 0.157, blue: 0.29))
                         .foregroundColor(.white)
                         .cornerRadius(8)
+                        .contentShape(Rectangle())
                     }
                 }
             }
@@ -478,9 +481,10 @@ struct QuickActionButton: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 100)
+            .frame(minHeight: 100) // Ensure minimum touch target
             .background(Color.gray.opacity(0.1))
             .cornerRadius(12)
+            .contentShape(Rectangle()) // Ensure entire area is tappable
         }
         .buttonStyle(PlainButtonStyle())
     }
