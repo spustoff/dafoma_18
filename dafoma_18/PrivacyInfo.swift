@@ -4,13 +4,13 @@
  These descriptions should be added to Info.plist for App Store submission:
  
  Location Usage:
- NSLocationWhenInUseUsageDescription: "LifeTunes uses your location to create personalized playlists based on your surroundings and to provide location-specific mood mapping features."
+ NSLocationWhenInUseUsageDescription: "LifeTunes uses your location to create personalized music playlists based on your surroundings (for example, relaxing music for parks or energetic music for gyms) and to map your mood entries to specific places so you can track patterns and discover which locations make you feel happiest."
  
  Notifications Usage:
- NSUserNotificationsUsageDescription: "LifeTunes sends notifications to remind you about daily challenges and motivational content to help maintain your wellness routine."
+ NSUserNotificationsUsageDescription: "LifeTunes sends you daily wellness reminders and motivational challenges to help maintain your mental health routine. For example, you'll receive a gentle reminder at 7 PM to log your mood or a motivational quote to start your day."
  
- These descriptions explain WHY the app needs each permission and how it benefits the user,
- which is required by Apple's App Store Review Guidelines.
+ These descriptions explain WHY the app needs each permission, HOW it will be used, and provide
+ specific examples of the functionality, which is required by Apple's App Store Review Guidelines.
  */
 
 import Foundation
@@ -19,9 +19,9 @@ import Foundation
 // The actual Info.plist keys should be added through Xcode project settings
 
 struct PrivacyInfo {
-    static let locationUsageDescription = "LifeTunes uses your location to create personalized playlists based on your surroundings and to provide location-specific mood mapping features."
+    static let locationUsageDescription = "LifeTunes uses your location to create personalized music playlists based on your surroundings (for example, relaxing music for parks or energetic music for gyms) and to map your mood entries to specific places so you can track patterns and discover which locations make you feel happiest."
     
-    static let notificationUsageDescription = "LifeTunes sends notifications to remind you about daily challenges and motivational content to help maintain your wellness routine."
+    static let notificationUsageDescription = "LifeTunes sends you daily wellness reminders and motivational challenges to help maintain your mental health routine. For example, you'll receive a gentle reminder at 7 PM to log your mood or a motivational quote to start your day."
     
     // Instructions for adding to Info.plist:
     // 1. Open your Xcode project
@@ -31,4 +31,8 @@ struct PrivacyInfo {
     //    - NSLocationWhenInUseUsageDescription
     //    - NSUserNotificationsUsageDescription
     // 5. Use the descriptions above as values
+    // 
+    // Note: Apple requires purpose strings to clearly explain HOW the data will be used
+    // and provide specific examples of the functionality.
 }
+

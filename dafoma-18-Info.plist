@@ -2,7 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>LifeTunes uses your location to create personalized music playlists based on your surroundings (for example, relaxing music for parks or energetic music for gyms) and to map your mood entries to specific places so you can track patterns and discover which locations make you feel happiest.</string>
 	<key>NSUserNotificationsUsageDescription</key>
-	<string>To use our features, you need to allow notifications</string>
+	<string>LifeTunes sends you daily wellness reminders and motivational challenges to help maintain your mental health routine. For example, you'll receive a gentle reminder at 7 PM to log your mood or a motivational quote to start your day.</string>
 </dict>
 </plist>

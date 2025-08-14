@@ -33,3 +33,4 @@ struct SecondaryButtonStyle: ButtonStyle {
             .contentShape(Rectangle()) // Ensure entire area is tappable
     }
 }
+
