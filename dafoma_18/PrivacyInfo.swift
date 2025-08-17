@@ -4,7 +4,7 @@
  These descriptions should be added to Info.plist for App Store submission:
  
  Location Usage:
- NSLocationWhenInUseUsageDescription: "LifeTunes uses your location to create personalized music playlists based on your surroundings (for example, relaxing music for parks or energetic music for gyms) and to map your mood entries to specific places so you can track patterns and discover which locations make you feel happiest."
+ NSLocationWhenInUseUsageDescription: "LifeTunes requires your location to automatically generate location-specific playlists that match your environment (for example, calming music when you're in a park, or energetic tracks when you're at the gym) and to create a personalized mood map by recording where you log your emotions, helping you identify which places positively or negatively affect your wellbeing."
  
  Notifications Usage:
  NSUserNotificationsUsageDescription: "LifeTunes sends you daily wellness reminders and motivational challenges to help maintain your mental health routine. For example, you'll receive a gentle reminder at 7 PM to log your mood or a motivational quote to start your day."
@@ -19,7 +19,7 @@ import Foundation
 // The actual Info.plist keys should be added through Xcode project settings
 
 struct PrivacyInfo {
-    static let locationUsageDescription = "LifeTunes uses your location to create personalized music playlists based on your surroundings (for example, relaxing music for parks or energetic music for gyms) and to map your mood entries to specific places so you can track patterns and discover which locations make you feel happiest."
+    static let locationUsageDescription = "LifeTunes requires your location to automatically generate location-specific playlists that match your environment (for example, calming music when you're in a park, or energetic tracks when you're at the gym) and to create a personalized mood map by recording where you log your emotions, helping you identify which places positively or negatively affect your wellbeing."
     
     static let notificationUsageDescription = "LifeTunes sends you daily wellness reminders and motivational challenges to help maintain your mental health routine. For example, you'll receive a gentle reminder at 7 PM to log your mood or a motivational quote to start your day."
     
