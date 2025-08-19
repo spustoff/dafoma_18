@@ -1,6 +1,8 @@
 import Foundation
 import CoreLocation
 import Combine
+import AVFoundation
+import MediaPlayer
 
 class MusicService: ObservableObject {
     @Published var currentPlaylist: Playlist?
@@ -8,6 +10,21 @@ class MusicService: ObservableObject {
     @Published var currentTrack: Track?
     
     private var cancellables = Set<AnyCancellable>()
+    private var audioPlayer: AVAudioPlayer?
+    private var audioSession: AVAudioSession = AVAudioSession.sharedInstance()
+    
+    init() {
+        setupAudioSession()
+    }
+    
+    private func setupAudioSession() {
+        do {
+            try audioSession.setCategory(.playback, mode: .default, options: [.allowAirPlay, .allowBluetooth])
+            try audioSession.setActive(true)
+        } catch {
+            print("Failed to setup audio session: \(error)")
+        }
+    }
     
     // Sample tracks for demo purposes
     private let sampleTracks: [Track] = [
@@ -80,16 +97,119 @@ class MusicService: ObservableObject {
     
     func playTrack(_ track: Track) {
         currentTrack = track
+        
+        // Generate a simple tone for demo purposes since we don't have actual audio files
+        playDemoTone(for: track)
+        
         isPlaying = true
     }
     
     func pausePlayback() {
+        audioPlayer?.pause()
         isPlaying = false
     }
     
     func stopPlayback() {
+        audioPlayer?.stop()
+        audioPlayer = nil
         isPlaying = false
         currentTrack = nil
+    }
+    
+    private func playDemoTone(for track: Track) {
+        // Generate a simple demo tone based on the track's mood
+        let frequency: Float = moodToFrequency(track.mood)
+        let duration: TimeInterval = min(track.duration, 30) // Limit to 30 seconds for demo
+        
+        if let audioData = generateTone(frequency: frequency, duration: duration) {
+            do {
+                audioPlayer = try AVAudioPlayer(data: audioData)
+                audioPlayer?.numberOfLoops = 0
+                audioPlayer?.play()
+                
+                // Setup media player info
+                setupNowPlayingInfo(for: track)
+                
+            } catch {
+                print("Error playing audio: \(error)")
+                // Fallback: just update UI state
+                isPlaying = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+                    self.isPlaying = false
+                }
+            }
+        }
+    }
+    
+    private func moodToFrequency(_ mood: String) -> Float {
+        switch mood.lowercased() {
+        case "energetic": return 880.0  // A5 - high energy
+        case "happy": return 659.25     // E5 - bright
+        case "calm", "relaxed": return 261.63  // C4 - peaceful
+        case "focused": return 440.0    // A4 - steady
+        case "creative": return 523.25  // C5 - inspiring
+        default: return 440.0           // A4 - default
+        }
+    }
+    
+    private func generateTone(frequency: Float, duration: TimeInterval) -> Data? {
+        let sampleRate: Float = 44100
+        let samples = Int(Float(duration) * sampleRate)
+        var audioData = Data(capacity: samples * 2)
+        
+        for i in 0..<samples {
+            let time = Float(i) / sampleRate
+            let amplitude: Float = 0.3 // Moderate volume
+            let sample = sin(2.0 * Float.pi * frequency * time) * amplitude
+            let intSample = Int16(sample * Float(Int16.max))
+            
+            withUnsafeBytes(of: intSample.littleEndian) { bytes in
+                audioData.append(contentsOf: bytes)
+            }
+        }
+        
+        return createWAVData(from: audioData, sampleRate: Int(sampleRate))
+    }
+    
+    private func createWAVData(from pcmData: Data, sampleRate: Int) -> Data? {
+        let headerSize = 44
+        let totalSize = headerSize + pcmData.count
+        
+        var header = Data(capacity: headerSize)
+        
+        // RIFF header
+        header.append("RIFF".data(using: .ascii)!)
+        header.append(UInt32(totalSize - 8).littleEndian.data)
+        header.append("WAVE".data(using: .ascii)!)
+        
+        // Format chunk
+        header.append("fmt ".data(using: .ascii)!)
+        header.append(UInt32(16).littleEndian.data) // Chunk size
+        header.append(UInt16(1).littleEndian.data)  // Audio format (PCM)
+        header.append(UInt16(1).littleEndian.data)  // Number of channels
+        header.append(UInt32(sampleRate).littleEndian.data) // Sample rate
+        header.append(UInt32(sampleRate * 2).littleEndian.data) // Byte rate
+        header.append(UInt16(2).littleEndian.data)  // Block align
+        header.append(UInt16(16).littleEndian.data) // Bits per sample
+        
+        // Data chunk
+        header.append("data".data(using: .ascii)!)
+        header.append(UInt32(pcmData.count).littleEndian.data)
+        
+        var wavData = header
+        wavData.append(pcmData)
+        
+        return wavData
+    }
+    
+    private func setupNowPlayingInfo(for track: Track) {
+        var nowPlayingInfo = [String: Any]()
+        nowPlayingInfo[MPMediaItemPropertyTitle] = track.title
+        nowPlayingInfo[MPMediaItemPropertyArtist] = track.artist
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = track.duration
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = 0
+        
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
     
     private func getTracksForLocation(_ location: CLLocationCoordinate2D, mood: String) -> [Track] {
@@ -107,5 +227,21 @@ class MusicService: ObservableObject {
         // Simplified location naming
         let names = ["Downtown", "Park", "Beach", "Cafe", "Gym", "Home", "Office", "City"]
         return names.randomElement() ?? "Local"
+    }
+}
+
+// MARK: - Data Extension for Audio Generation
+extension Data {
+    init<T>(from value: T) {
+        var value = value
+        self = withUnsafePointer(to: &value) {
+            Data(bytes: $0, count: MemoryLayout<T>.size)
+        }
+    }
+}
+
+extension FixedWidthInteger {
+    var data: Data {
+        return Data(from: self)
     }
 }
