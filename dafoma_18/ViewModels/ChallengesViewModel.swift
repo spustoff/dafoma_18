@@ -47,20 +47,28 @@ class ChallengesViewModel: ObservableObject {
     }
     
     func startChallenge(_ challenge: Challenge) {
+        print("Starting challenge: \(challenge.title)")
         var updatedChallenge = challenge
         updatedChallenge.currentProgress = 0
         currentChallenge = updatedChallenge
         
         // Get recommended music for the challenge
         musicService.getRecommendedTracks(for: challenge) { tracks in
-            if let track = tracks.first {
-                updatedChallenge.motivationalTrack = track
+            DispatchQueue.main.async {
+                if let track = tracks.first {
+                    updatedChallenge.motivationalTrack = track
+                }
+                print("Challenge started successfully: \(challenge.title)")
             }
         }
         
         if let index = dailyChallenges.firstIndex(where: { $0.id == challenge.id }) {
             dailyChallenges[index] = updatedChallenge
+            print("Updated challenge in daily challenges array")
         }
+        
+        // Save the changes
+        saveChallenges()
     }
     
     func updateChallengeProgress(_ challenge: Challenge, progress: Int) {

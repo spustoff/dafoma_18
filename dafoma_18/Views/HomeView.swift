@@ -60,6 +60,7 @@ struct HomeView: View {
         .accentColor(Color(red: 0.996, green: 0.157, blue: 0.29))
         .onAppear {
             setupTabBarAppearance()
+            print("HomeView appeared - Daily challenges count: \(challengesViewModel.dailyChallenges.count)")
         }
     }
     
@@ -224,6 +225,7 @@ struct DashboardView: View {
             } else {
                 ForEach(Array(challengesViewModel.dailyChallenges.prefix(3)), id: \.id) { challenge in
                     ChallengeCard(challenge: challenge) {
+                        print("Challenge card action triggered for: \(challenge.title)")
                         challengesViewModel.startChallenge(challenge)
                     }
                 }
@@ -340,55 +342,71 @@ struct ChallengeCard: View {
     let action: () -> Void
     
     var body: some View {
-        HStack(spacing: 15) {
-            Image(systemName: categoryIcon(challenge.category))
-                .font(.title2)
-                .foregroundColor(Color(red: 0.996, green: 0.157, blue: 0.29))
-                .frame(width: 40, height: 40)
-                .background(Color(red: 0.996, green: 0.157, blue: 0.29).opacity(0.2))
-                .cornerRadius(20)
-            
-            VStack(alignment: .leading, spacing: 5) {
-                Text(challenge.title)
-                    .font(.headline)
-                    .foregroundColor(.white)
+        VStack(spacing: 0) {
+            HStack(spacing: 15) {
+                Image(systemName: categoryIcon(challenge.category))
+                    .font(.title2)
+                    .foregroundColor(Color(red: 0.996, green: 0.157, blue: 0.29))
+                    .frame(width: 40, height: 40)
+                    .background(Color(red: 0.996, green: 0.157, blue: 0.29).opacity(0.2))
+                    .cornerRadius(20)
                 
-                Text(challenge.description)
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .lineLimit(2)
-                
-                HStack {
-                    Text(challenge.category.rawValue)
-                        .font(.caption2)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.blue.opacity(0.2))
-                        .foregroundColor(.blue)
-                        .cornerRadius(8)
-                    
-                    Spacer()
-                    
-                    if challenge.isCompleted {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                    } else {
-                        Button("Start") {
-                            action()
-                        }
-                        .font(.caption)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .frame(minHeight: 44)
-                        .background(Color(red: 0.996, green: 0.157, blue: 0.29))
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(challenge.title)
+                        .font(.headline)
                         .foregroundColor(.white)
-                        .cornerRadius(8)
-                        .contentShape(Rectangle())
+                    
+                    Text(challenge.description)
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .lineLimit(2)
+                    
+                    HStack {
+                        Text(challenge.category.rawValue)
+                            .font(.caption2)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.blue.opacity(0.2))
+                            .foregroundColor(.blue)
+                            .cornerRadius(8)
+                        
+                        Spacer()
+                        
+                        if challenge.isCompleted {
+                            HStack {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                                Text("Completed")
+                                    .font(.caption)
+                                    .foregroundColor(.green)
+                            }
+                            .frame(minHeight: 44)
+                        } else {
+                            Button(action: {
+                                print("Start button tapped for challenge: \(challenge.title)")
+                                action()
+                            }) {
+                                HStack {
+                                    Image(systemName: "play.fill")
+                                        .font(.caption)
+                                    Text("Start")
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                }
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                                .frame(minHeight: 44)
+                                .background(Color(red: 0.996, green: 0.157, blue: 0.29))
+                                .cornerRadius(8)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
                     }
                 }
+                
+                Spacer()
             }
-            
-            Spacer()
         }
         .padding()
         .background(Color.gray.opacity(0.1))
@@ -465,7 +483,9 @@ struct QuickActionButton: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            action()
+        }) {
             VStack(spacing: 10) {
                 Image(systemName: icon)
                     .font(.title)
@@ -484,9 +504,9 @@ struct QuickActionButton: View {
             .frame(minHeight: 100) // Ensure minimum touch target
             .background(Color.gray.opacity(0.1))
             .cornerRadius(12)
-            .contentShape(Rectangle()) // Ensure entire area is tappable
         }
         .buttonStyle(PlainButtonStyle())
+        .contentShape(Rectangle()) // Ensure entire area is tappable
     }
 }
 
