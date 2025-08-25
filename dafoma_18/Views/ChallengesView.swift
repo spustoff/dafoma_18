@@ -289,7 +289,10 @@ struct CategoryChip: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            print("Category chip tapped: \(title)")
+            action()
+        }) {
             HStack(spacing: 8) {
                 if let category = category {
                     Image(systemName: categoryIcon(category))
@@ -307,9 +310,8 @@ struct CategoryChip: View {
             )
             .foregroundColor(isSelected ? .white : .gray)
             .cornerRadius(20)
-            .contentShape(Capsule()) // Ensure entire area is tappable
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(StartButtonStyle())
     }
     
     private func categoryIcon(_ category: ChallengeCategory) -> String {
@@ -386,21 +388,22 @@ struct ChallengeRowView: View {
                         
                         Spacer()
                         
-                        Button(challenge.currentProgress > 0 ? "Continue" : "Start") {
-                            if challenge.currentProgress > 0 {
-                                viewModel.updateChallengeProgress(challenge, progress: challenge.currentProgress + 1)
-                            } else {
-                                viewModel.startChallenge(challenge)
-                            }
-                        }
-                        .font(.caption)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .frame(minHeight: 44)
-                        .background(Color(red: 0.996, green: 0.157, blue: 0.29))
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                        .contentShape(Rectangle())
+//                        Button(challenge.currentProgress > 0 ? "Continue" : "Start") {
+//                            print("Challenge button tapped: \(challenge.title)")
+//                            if challenge.currentProgress > 0 {
+//                                viewModel.updateChallengeProgress(challenge, progress: challenge.currentProgress + 1)
+//                            } else {
+//                                viewModel.startChallenge(challenge)
+//                            }
+//                        }
+//                        .font(.caption)
+//                        .padding(.horizontal, 12)
+//                        .padding(.vertical, 6)
+//                        .frame(minWidth: 80, minHeight: 44)
+//                        .background(Color(red: 0.996, green: 0.157, blue: 0.29))
+//                        .foregroundColor(.white)
+//                        .cornerRadius(12)
+//                        .buttonStyle(StartButtonStyle())
                     }
                 }
             }
@@ -534,6 +537,7 @@ struct ChallengeDetailSheet: View {
                                 .cornerRadius(12)
                             } else {
                                 Button(challenge.currentProgress > 0 ? "Continue Challenge" : "Start Challenge") {
+                                    print("Challenge detail button tapped: \(challenge.title)")
                                     if challenge.currentProgress > 0 {
                                         viewModel.updateChallengeProgress(challenge, progress: challenge.currentProgress + 1)
                                     } else {
@@ -545,6 +549,7 @@ struct ChallengeDetailSheet: View {
                                 
                                 if challenge.currentProgress > 0 {
                                     Button("Mark Step Complete") {
+                                        print("Mark step complete tapped: \(challenge.title)")
                                         viewModel.updateChallengeProgress(challenge, progress: challenge.currentProgress + 1)
                                     }
                                     .buttonStyle(SecondaryButtonStyle())

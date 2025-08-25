@@ -361,6 +361,7 @@ struct ArticleRowView: View {
                         .foregroundColor(.gray)
                     
                     Button(action: {
+                        print("Bookmark button tapped for article: \(article.title)")
                         viewModel.bookmarkArticle(article)
                     }) {
                         Image(systemName: article.isBookmarked ? "bookmark.fill" : "bookmark")
@@ -368,7 +369,7 @@ struct ArticleRowView: View {
                             .frame(width: 44, height: 44)
                             .contentShape(Rectangle())
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(StartButtonStyle())
                     
                     if viewModel.isArticleRead(article) {
                         Image(systemName: "checkmark.circle.fill")

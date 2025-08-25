@@ -228,7 +228,10 @@ struct QuickCreateButton: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            print("QuickCreateButton tapped: \(title)")
+            action()
+        }) {
             VStack(spacing: 8) {
                 if isLoading {
                     ProgressView()
@@ -248,10 +251,9 @@ struct QuickCreateButton: View {
             .frame(minWidth: 80, minHeight: 70) // Ensure minimum touch target
             .background(Color.gray.opacity(0.2))
             .cornerRadius(12)
-            .contentShape(Rectangle()) // Ensure entire area is tappable
         }
         .disabled(isLoading)
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(StartButtonStyle())
     }
 }
 
@@ -314,7 +316,7 @@ struct CurrentPlaylistCard: View {
             // Playback controls
             HStack(spacing: 30) {
                 Button(action: {
-                    // Previous track functionality
+                    print("Previous track button tapped")
                     viewModel.playPreviousTrack()
                 }) {
                     Image(systemName: "backward.fill")
@@ -323,9 +325,10 @@ struct CurrentPlaylistCard: View {
                         .frame(width: 44, height: 44)
                         .contentShape(Rectangle())
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(StartButtonStyle())
                 
                 Button(action: {
+                    print("Play/Pause button tapped - isPlaying: \(viewModel.isPlaying)")
                     if viewModel.isPlaying {
                         viewModel.pausePlayback()
                     } else if let track = playlist.tracks.first {
@@ -338,10 +341,10 @@ struct CurrentPlaylistCard: View {
                         .frame(width: 60, height: 60)
                         .contentShape(Circle())
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(StartButtonStyle())
                 
                 Button(action: {
-                    // Next track functionality
+                    print("Next track button tapped")
                     viewModel.playNextTrack()
                 }) {
                     Image(systemName: "forward.fill")
@@ -350,7 +353,7 @@ struct CurrentPlaylistCard: View {
                         .frame(width: 44, height: 44)
                         .contentShape(Rectangle())
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(StartButtonStyle())
             }
         }
         .padding()
@@ -423,6 +426,7 @@ struct PlaylistRowCard: View {
             // Action buttons
             HStack(spacing: 10) {
                 Button(action: {
+                    print("Playlist play button tapped: \(playlist.name)")
                     viewModel.currentPlaylist = playlist
                     if let firstTrack = playlist.tracks.first {
                         viewModel.playTrack(firstTrack)
@@ -434,7 +438,7 @@ struct PlaylistRowCard: View {
                         .frame(width: 44, height: 44)
                         .contentShape(Circle())
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(StartButtonStyle())
                 
                 Menu {
                     Button("Delete", role: .destructive) {

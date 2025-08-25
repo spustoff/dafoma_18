@@ -225,8 +225,7 @@ struct DashboardView: View {
             } else {
                 ForEach(Array(challengesViewModel.dailyChallenges.prefix(3)), id: \.id) { challenge in
                     ChallengeCard(challenge: challenge) {
-                        print("Challenge card action triggered for: \(challenge.title)")
-                        challengesViewModel.startChallenge(challenge)
+                        // No action needed - Start button removed
                     }
                 }
             }
@@ -382,25 +381,14 @@ struct ChallengeCard: View {
                             }
                             .frame(minHeight: 44)
                         } else {
-                            Button(action: {
-                                print("Start button tapped for challenge: \(challenge.title)")
-                                action()
-                            }) {
-                                HStack {
-                                    Image(systemName: "play.fill")
-                                        .font(.caption)
-                                    Text("Start")
-                                        .font(.caption)
-                                        .fontWeight(.medium)
-                                }
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 10)
-                                .frame(minHeight: 44)
-                                .background(Color(red: 0.996, green: 0.157, blue: 0.29))
-                                .cornerRadius(8)
+                            HStack {
+                                Image(systemName: "clock")
+                                    .foregroundColor(.gray)
+                                Text("Pending")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
                             }
-                            .buttonStyle(PlainButtonStyle())
+                            .frame(minHeight: 44)
                         }
                     }
                 }
@@ -484,6 +472,7 @@ struct QuickActionButton: View {
     
     var body: some View {
         Button(action: {
+            print("QuickActionButton tapped: \(title)")
             action()
         }) {
             VStack(spacing: 10) {
@@ -505,8 +494,7 @@ struct QuickActionButton: View {
             .background(Color.gray.opacity(0.1))
             .cornerRadius(12)
         }
-        .buttonStyle(PlainButtonStyle())
-        .contentShape(Rectangle()) // Ensure entire area is tappable
+        .buttonStyle(StartButtonStyle())
     }
 }
 

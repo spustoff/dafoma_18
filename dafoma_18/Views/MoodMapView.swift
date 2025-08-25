@@ -229,7 +229,10 @@ struct MoodAnnotationView: View {
     let onTap: () -> Void
     
     var body: some View {
-        Button(action: onTap) {
+        Button(action: {
+            print("MoodAnnotation tapped: \(mood.rawValue)")
+            onTap()
+        }) {
             ZStack {
                 Circle()
                     .fill(Color(hex: mood.color))
@@ -240,7 +243,7 @@ struct MoodAnnotationView: View {
                     .font(.title3)
             }
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(StartButtonStyle())
     }
 }
 
@@ -249,7 +252,10 @@ struct QuickMoodButton: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            print("QuickMoodButton tapped: \(mood.rawValue)")
+            action()
+        }) {
             VStack(spacing: 8) {
                 Text(mood.emoji)
                     .font(.title)
@@ -262,7 +268,7 @@ struct QuickMoodButton: View {
             .background(Color.gray.opacity(0.2))
             .cornerRadius(12)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(StartButtonStyle())
     }
 }
 
